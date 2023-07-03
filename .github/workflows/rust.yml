@@ -75,18 +75,15 @@ jobs:
           path: |
             target/${{ env.rustarch }}/${{ env.PROFILE }}/beam-inspector
 
-  test:
-    name: Run tests
-    needs: [ build-rust ]
-    runs-on: ubuntu-22.04
+  # Not implemented
+  # test:
+  #   name: Run tests
+  #   needs: [ build-rust ]
+  #   runs-on: ubuntu-22.04
 
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
-        with:
-          name: binaries-amd64
-          path: artifacts/binaries-amd64/
-      - run: ./dev/test ci
+  #   steps:
+  #     - uses: actions/checkout@v3
+      
 
   docker-broker:
     needs: [ build-rust, pre-check, test ]
