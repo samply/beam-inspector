@@ -1,5 +1,5 @@
 use axum::{Router, routing::get, http::{Uri, header, StatusCode}, response::{IntoResponse, Response}, body::{boxed, Full}};
-use hyper::{Client, client::HttpConnector, Request, Body, http::uri::{Parts, PathAndQuery}};
+use hyper::{Client, client::HttpConnector, Request, Body, http::uri::PathAndQuery};
 use once_cell::sync::Lazy;
 use rust_embed::RustEmbed;
 
