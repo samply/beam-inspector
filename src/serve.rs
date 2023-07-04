@@ -19,7 +19,12 @@ pub fn router(beam_proxy_url: Uri, monitoring_secret: String) -> Router {
     };
     Router::new()
         .route("/events", get(move || async move {
-            CLIENT.request(Request::get(monitoring_endpoint).header(header::COOKIE, format!("{monitoring_secret}")).body(Body::empty()).expect("Building request failed")).await.expect("Failed to make request to beam proxy")
+            CLIENT.request(Request::get(monitoring_endpoint)
+                .header(header::COOKIE, format!("monitoring_key={monitoring_secret}"))
+                .body(Body::empty())
+                .expect("Building request failed"))
+                .await
+                .expect("Failed to make request to beam proxy")
         }))
         .fallback(static_handler)
 }

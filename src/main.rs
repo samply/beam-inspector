@@ -10,7 +10,7 @@ mod serve;
 struct Config {
 
     /// Local bind address
-    #[clap(long, env, value_parser, default_value_t = SocketAddr::from_str("0.0.0.0:8081").unwrap())]
+    #[clap(long, env, value_parser, default_value_t = SocketAddr::from_str("0.0.0.0:1337").unwrap())]
     pub bind_addr: SocketAddr,
 
     /// Beam proxy base url 
