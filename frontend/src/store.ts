@@ -16,7 +16,7 @@ function append_result(result: MsgTaskResult) {
 const api_token = prompt("Please enter your maintanance key");
 document.cookie = `maintanance_key=${api_token}`
 
-const sse_stream = new EventSource("/monitor/events", {
+const sse_stream = new EventSource("/events", {
     withCredentials: true
 });
 
