@@ -31,7 +31,7 @@ jobs:
           - arm64
 
     steps:
-      - name: Set profile ${{ env.PROFILE }}
+      - name: Set profile ${{ env.PROFILE }} and rustarch
         env:
           PROFILE: ${{ env.PROFILE }}
         run: |
@@ -42,7 +42,6 @@ jobs:
           else
             exit 1
           fi
-        run: |
           if [ "${PROFILE}" == "release" ]; then
             echo "profilestr=--release" >> $GITHUB_ENV
           elif [ "${PROFILE}" == "debug" ]; then
