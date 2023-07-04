@@ -27,13 +27,21 @@ jobs:
     strategy:
       matrix:
         arch:
-          - x86_64-unknown-linux-gnu
-          - aarch64-unknown-linux-gnu
+          - amd64
+          - arm64
 
     steps:
       - name: Set profile ${{ env.PROFILE }}
         env:
           PROFILE: ${{ env.PROFILE }}
+        run: |
+          if [ "${ARCH}" == "arm64" ]; then
+            echo "rustarch=aarch64-unknown-linux-gnu" >> $GITHUB_ENV
+          elif [ "${ARCH}" == "amd64" ]; then
+            echo "rustarch=x86_64-unknown-linux-gnu" >> $GITHUB_ENV
+          else
+            exit 1
+          fi
         run: |
           if [ "${PROFILE}" == "release" ]; then
             echo "profilestr=--release" >> $GITHUB_ENV
@@ -57,7 +65,7 @@ jobs:
         with:
           toolchain: stable
           override: true
-          target: ${{ matrix.arch }}
+          target: ${{ env.rustarch }}
       - uses: Swatinem/rust-cache@v2
         with:
           key: ${{ matrix.arch }}-${{ env.PROFILE }}
@@ -67,13 +75,13 @@ jobs:
         with:
           use-cross: true
           command: build
-          args: --target ${{ matrix.arch }} ${{ env.profilestr }}
+          args: --target ${{ env.rustarch }} ${{ env.profilestr }}
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: binaries-${{ matrix.arch }}
           path: |
-            target/${{ matrix.arch }}/${{ env.PROFILE }}/beam-inspector
+            target/${{ env.rustarch }}/${{ env.PROFILE }}/beam-inspector
 
   # Not implemented
   # test:
