@@ -34,6 +34,7 @@ jobs:
       - name: Set profile ${{ env.PROFILE }} and rustarch
         env:
           PROFILE: ${{ env.PROFILE }}
+          ARCH: ${{ matrix.arch }}
         run: |
           if [ "${ARCH}" == "arm64" ]; then
             echo "rustarch=aarch64-unknown-linux-gnu" >> $GITHUB_ENV
