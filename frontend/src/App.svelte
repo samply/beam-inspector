@@ -1,15 +1,21 @@
 <script lang="ts">
+    import AppView from "./lib/AppView.svelte";
     import EventList from "./lib/EventList.svelte";
     import Nav from "./lib/Nav.svelte";
+    import Router from 'svelte-spa-router'
+    const routes = {
+        '/': EventList,
+        '/app/:app': AppView,
+    }
 </script>
 
 <main>
     <aside>
-        <Nav />
+        <Nav apps={["todo", "get", "from", "config", "or", "received", "tasks"]} />
     </aside>
 
     <div class="content">
-        <EventList />
+        <Router {routes} />
     </div>
 </main>
 

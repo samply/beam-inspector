@@ -18,6 +18,7 @@
     "vite": "^4.2.0"
   },
   "dependencies": {
-    "svelte-json-tree": "^1.0.0"
+    "svelte-json-tree": "^1.0.0",
+    "svelte-spa-router": "^3.3.0"
   }
 }
