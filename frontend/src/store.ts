@@ -13,12 +13,7 @@ function append_result(result: MsgTaskResult) {
     }
 }
 
-const api_token = prompt("Please enter your maintanance key");
-document.cookie = `maintanance_key=${api_token}`
-
-const sse_stream = new EventSource("/events", {
-    withCredentials: true
-});
+const sse_stream = new EventSource("/events");
 
 sse_stream.addEventListener("message", (e) => {
     // We cant push as we need svelte to understand that we updated this and need to rerender
@@ -53,9 +48,9 @@ sse_stream.addEventListener("message", (e) => {
     }
 })
 
-sse_stream.addEventListener("error", () => {
+sse_stream.addEventListener("error", (e) => {
+    console.log("Error during SSE", e);
     if (sse_stream.CLOSED) {
-        alert("Invalid maintanance key");
-        location.reload();
+        alert("SSE connection closed");
     }
 });
