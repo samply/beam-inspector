@@ -1,12 +1,12 @@
 
 <script lang="ts">
-    import { push } from 'svelte-spa-router';
+    import { push, link } from 'svelte-spa-router';
     import beamLogo from '../assets/Logo.svg'
     export let apps: String[];
 </script>
 
 <nav>
-    <a href="/" target="_blank" rel="noreferrer">
+    <a href="/" use:link target="_blank" rel="noreferrer">
         <img src={beamLogo} class="logo" alt="Beam Logo" />
     </a>
     <div class="apps">

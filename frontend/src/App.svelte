@@ -11,7 +11,7 @@
 
 <main>
     <aside>
-        <Nav apps={["todo", "get", "from", "config", "or", "received", "tasks"]} />
+        <Nav apps={["app1", "todo", "get", "from", "config", "or", "received", "tasks"]} />
     </aside>
 
     <div class="content">

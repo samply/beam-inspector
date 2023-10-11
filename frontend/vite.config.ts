@@ -6,5 +6,10 @@ export default defineConfig({
   plugins: [svelte()],
   build: {
     emptyOutDir: true,
+  },
+  server: {
+    proxy: {
+        '/events': 'http://localhost:1337'
+    }
   }
 })
