@@ -4,6 +4,8 @@
     import type { Task } from "../task";
     import TaskView from "./TaskView.svelte";
 
+    export let default_filter: (t: Task) => boolean = _ => true;
+
     // Filter ideas: from, to, hide successfully finished 
     let from_filter_value = writable("");
     let from_filter = derived(from_filter_value, ($from_filter_value) => (task: Task) => {
@@ -16,19 +18,28 @@
         return !$done_filter || !Array.from(task.results.values()).every(result => result?.status === "succeeded")
     });
     
+    // This should proably be a toggle?
     let incoming_filter_active = writable(false);
     let hide_incoming_filter = derived(incoming_filter_active, ($incoming_filter_active) => (task: Task) => {
         return !$incoming_filter_active || !task.is_incoming
     });
 
-    let filters = derived([from_filter, hide_done_filter, hide_incoming_filter], (filters) => filters, [$from_filter, $hide_done_filter, $hide_incoming_filter]);
+    let filters = derived([from_filter, hide_done_filter, hide_incoming_filter], (filters) => [ default_filter, ...filters ], [$from_filter, $hide_done_filter, $hide_incoming_filter]);
     // Update filtered tasks whenever a new task or a new filter gets added
     let filtered_tasks = derived(
         [tasks, filters],
         ([$tasks, $filters]) => $tasks.filter(task => $filters.every(filter => filter(task))));
+    $: {
+        default_filter;
+        filtered_tasks = derived(
+            [tasks, filters],
+            ([$tasks, $filters]) => $tasks.filter(task => $filters.every(filter => filter(task)))
+        );
+    }
 </script>
 
 <header>
+    <!-- Maybe this should be the switch for incoming outgoing -->
     <h2>Tasks</h2>
 </header>
 <div>

@@ -26,20 +26,20 @@ nav {
     justify-content: center;
     position: sticky;
     top: 0;
-    /* align-items: f; */
 }
 
 button {
-    display: block;
-    border: 1px solid gray;
+    width: 10rem;
+    display: flex;
 }
 
 .apps {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin-left: 3rem;
-    gap: 1em;
+    margin: auto;
+    margin-top: 2rem;
+    gap: 2em;
 }
 
 .logo {

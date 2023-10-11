@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Task } from "../task";
+    import { default_mapping, Task, mappings } from "../task";
     import ResultView from "./ResultView.svelte";
     import Body from "./Body.svelte";
     import Expandable from "./Expandable.svelte";
@@ -15,6 +15,7 @@
     }
 
     export let task: Task;
+    $: mapper = mappings[task.task.from.split(".")[0]] ?? default_mapping;
 </script>
 
 <div class="task">
@@ -23,13 +24,23 @@
     {:else}
     <div>Outgoing task from local app: {task.task.from}</div>
     {/if}
-    <Body json={task.task.body} />
+    <table>
+        {#each [...Object.entries(mapper.task(task.task))] as [key, value]}
+        <tr>{value}</tr>
+        {/each}
+    </table>
+    <!-- <Body json={task.task.body} /> -->
     <span>Results:</span>
     <ul>
         {#each [...task.results] as [to, result]}
             <li>
                 {#if result}
-                    <ResultView {result} />
+                    <!-- <ResultView {result} /> -->
+                    <table>
+                        {#each [...Object.entries(mapper.result(result))] as [key, value]}
+                        <tr>{value}</tr>
+                        {/each}
+                    </table>
                 {:else}
                     <span>Pending result from: {to}</span>
                 {/if}

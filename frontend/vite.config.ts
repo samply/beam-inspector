@@ -9,7 +9,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
-        '/events': 'http://localhost:1337'
+        '/events': 'http://localhost:1337',
+        '/mappings': 'http://localhost:1337',
     }
   }
 })

@@ -21,3 +21,32 @@ export class Task {
     }
     
 }
+
+function default_task_formatter(task: MsgTaskRequest) {
+    return {"body": task.body}
+}
+
+function default_result_formatter(result: MsgTaskResult) {
+    return {"body": result.body}
+}
+
+// TODO: Figure out what signature we want to have here
+// Ideas
+// Task.task.body => {"collum_name": html}
+// Task.results[i] => {"collum_name": html}
+const mappings_data: Record<string, {task?: string, result?: string}> = await (await fetch("/mappings")).json();
+for (const key in mappings_data) {
+    mappings_data[key].task = eval(`(${mappings_data[key].task ?? default_task_formatter})`);
+    mappings_data[key].result = eval(`(${mappings_data[key].result ?? default_result_formatter})`);
+}
+
+type Mapping = {
+    task: (task: MsgTaskRequest) => Record<string, string>,
+    result: (msg: MsgTaskResult) => Record<string, string>
+}
+export const mappings: Record<string, Mapping> = mappings_data as any;
+
+export const default_mapping: Mapping = {
+    task: default_task_formatter,
+    result: default_result_formatter
+}
