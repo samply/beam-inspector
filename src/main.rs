@@ -7,7 +7,7 @@ mod serve;
 
 #[derive(Debug, Parser)]
 #[clap(name("🌈 Samply.Beam.Inspector"))]
-struct Config {
+struct CliConfig {
 
     /// Local bind address
     #[clap(long, env, value_parser, default_value_t = SocketAddr::from_str("0.0.0.0:1337").unwrap())]
@@ -26,7 +26,7 @@ struct Config {
 
 #[tokio::main]
 async fn main() {
-    let config = Config::parse();
+    let config = CliConfig::parse();
     axum::Server::bind(&config.bind_addr)
         .serve(serve::router(config.beam_proxy_url, config.api_key).into_make_service())
         .await

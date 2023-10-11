@@ -1,4 +1,6 @@
-use axum::{Router, routing::get, http::{Uri, header, StatusCode}, response::{IntoResponse, Response}, body::{boxed, Full}};
+use std::fs;
+
+use axum::{Router, routing::get, http::{Uri, header, StatusCode}, response::{IntoResponse, Response}, body::{boxed, Full}, Json};
 use hyper::{Client, client::HttpConnector, Request, Body, http::uri::PathAndQuery};
 use once_cell::sync::Lazy;
 use rust_embed::RustEmbed;
@@ -25,6 +27,9 @@ pub fn router(beam_proxy_url: Uri, monitoring_secret: String) -> Router {
                 .expect("Building request failed"))
                 .await
                 .expect("Failed to make request to beam proxy")
+        }))
+        .route("/mappings", get(move || async move {
+            Json(json5::from_str::<serde_json::Value>(&fs::read_to_string("./formatters/example.json").unwrap()).unwrap())
         }))
         .fallback(static_handler)
 }

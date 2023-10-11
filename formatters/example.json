@@ -1,0 +1,10 @@
+{
+    "app1": {
+        "task": "function(task) { \
+            return atob('SGVsbG8gV29ybGQ='); \
+        }",
+        "result": "function(result) { \
+            return result.body; \
+        }"
+    }
+}
