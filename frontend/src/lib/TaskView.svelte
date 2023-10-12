@@ -4,49 +4,61 @@
     import Body from "./Body.svelte";
     import Expandable from "./Expandable.svelte";
     import type { MsgTaskRequest } from "../types";
-    import JSONTree from 'svelte-json-tree';
+    import JSONTree from "svelte-json-tree";
 
     function format_failiure_strat(task: MsgTaskRequest): string {
         if ("discard" === task.failure_strategy) {
-            return "Discard on fail."
+            return "Discard on fail.";
         } else {
-            return `Retry every ${task.failure_strategy.retry.backoff_millisecs}ms for ${task.failure_strategy.retry.max_tries} times.`
+            return `Retry every ${task.failure_strategy.retry.backoff_millisecs}ms for ${task.failure_strategy.retry.max_tries} times.`;
         }
     }
 
     export let task: Task;
     $: mapper = mappings[task.task.from.split(".")[0]] ?? default_mapping;
+    $: formated_task = mapper.task(task.task);
+    $: result_keys = Object.keys(Array.from(task.results.values()).filter((v) => !!v).slice(1).map(mapper.result)[0] ?? {});
+    $: all_result_keys = ["From", ...result_keys]
 </script>
 
 <div class="task">
     {#if task.is_incoming}
-    <div>Task from remote app: {task.task.from}</div>
+        <div>Task from remote app: {task.task.from}</div>
     {:else}
-    <div>Outgoing task from local app: {task.task.from}</div>
+        <div>Outgoing task from local app: {task.task.from}</div>
     {/if}
     <table>
-        {#each [...Object.entries(mapper.task(task.task))] as [key, value]}
-        <tr>{value}</tr>
+        <tr>
+            {#each Object.keys(formated_task) as th}
+                <th>{th}</th>
+            {/each}
+        </tr>
+        <tr>
+            {#each Object.values(formated_task) as value}
+                <td>{value}</td>
+            {/each}
+        </tr>
+    </table>
+    <span>Results:</span>
+    <table>
+        <tr>
+        {#each all_result_keys as th}
+            <th>{th}</th>
+        {/each}
+        </tr>
+        {#each [...task.results] as [to, result]}
+            <tr>
+                <td>{to}</td>
+            {#if result}
+                {#each Object.values(mapper.result(result)) as value}
+                    <td>{value}</td>
+                {/each}
+            {:else}
+                <td>Pending result from: {to}</td>
+            {/if}
+            </tr>
         {/each}
     </table>
-    <!-- <Body json={task.task.body} /> -->
-    <span>Results:</span>
-    <ul>
-        {#each [...task.results] as [to, result]}
-            <li>
-                {#if result}
-                    <!-- <ResultView {result} /> -->
-                    <table>
-                        {#each [...Object.entries(mapper.result(result))] as [key, value]}
-                        <tr>{value}</tr>
-                        {/each}
-                    </table>
-                {:else}
-                    <span>Pending result from: {to}</span>
-                {/if}
-            </li>
-        {/each}
-    </ul>
     <Expandable>
         <span slot="head">Show extra info</span>
         <div>
@@ -63,17 +75,11 @@
 </div>
 
 <style>
-.task {
-    background-color: var(--color-gray);
-    border-radius: 2rem;
-    margin: 1rem;
-    text-align: start;
-    padding: 1rem;
-}
-li {
-    list-style: none;
-}
-ul {
-    padding-left: 20px;
-}
+    .task {
+        background-color: var(--color-gray);
+        border-radius: 2rem;
+        margin: 1rem;
+        text-align: start;
+        padding: 1rem;
+    }
 </style>

@@ -3,6 +3,7 @@
     import EventList from "./lib/EventList.svelte";
     import Nav from "./lib/Nav.svelte";
     import Router from 'svelte-spa-router'
+    import { mappings } from "./task";
     const routes = {
         '/': EventList,
         '/app/:app': AppView,
@@ -11,7 +12,7 @@
 
 <main>
     <aside>
-        <Nav apps={["app1", "todo", "get", "from", "config", "or", "received", "tasks"]} />
+        <Nav apps={Object.keys(mappings)} />
     </aside>
 
     <div class="content">
