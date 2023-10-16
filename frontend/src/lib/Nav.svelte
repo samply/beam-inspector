@@ -2,6 +2,7 @@
 <script lang="ts">
     import { push, link } from 'svelte-spa-router';
     import beamLogo from '../assets/Logo.svg'
+    import NavButton from './NavButton.svelte';
     export let apps: String[];
 </script>
 
@@ -11,7 +12,7 @@
     </a>
     <div class="apps">
     {#each apps as app}
-        <button on:click={() => push(`/app/${app}`)}>{app}</button>
+        <NavButton href={`/app/${app}`}>{app}</NavButton>
     {/each}
     </div>
 </nav>
@@ -26,11 +27,6 @@ nav {
     justify-content: center;
     position: sticky;
     top: 0;
-}
-
-button {
-    width: 10rem;
-    display: flex;
 }
 
 .apps {

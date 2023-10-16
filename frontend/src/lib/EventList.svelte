@@ -3,10 +3,11 @@
     import { tasks } from "../store";
     import type { Task } from "../task";
     import TaskView from "./TaskView.svelte";
+    import ModeToggle from "./ModeToggle.svelte";
 
     export let default_filter: (t: Task) => boolean = _ => true;
 
-    // Filter ideas: from, to, hide successfully finished 
+    // TODO: Fix filters
     let from_filter_value = writable("");
     let from_filter = derived(from_filter_value, ($from_filter_value) => (task: Task) => {
         // If from_filter is not an empty string or undefined always return true otherwise check from field
@@ -39,14 +40,13 @@
 </script>
 
 <header>
-    <!-- Maybe this should be the switch for incoming outgoing -->
     <h2>Tasks</h2>
+    <ModeToggle bind:incoming={$incoming_filter_active}/>
 </header>
 <div>
     <div class="settings">
         <button on:click={() => $tasks = []}>Clear Tasks</button>
         <button class:active={$done_filter} on:click={() => $done_filter = !$done_filter}>Hide completed</button>
-        <button class:active={$incoming_filter_active} on:click={() => $incoming_filter_active = !$incoming_filter_active}>Hide incoming</button>
         <span>Filter from:</span>
         <input type="text" class="task-filter" bind:value={$from_filter_value}>
     </div>
@@ -60,6 +60,9 @@
 </div>
 
 <style>
+    header {
+        margin: 1rem 0;
+    }
     li {
         list-style: none;
     }
@@ -80,6 +83,6 @@
         gap: 1rem;
     }
     .active {
-        outline: solid #646cff 2px;
+        outline: solid var(--color-blue) 2px;
     }
 </style>

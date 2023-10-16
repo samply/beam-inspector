@@ -18,7 +18,7 @@
     $: mapper = mappings[task.task.from.split(".")[0]] ?? default_mapping;
     $: formated_task = mapper.task(task.task);
     $: result_keys = Object.keys(Array.from(task.results.values()).filter((v) => !!v).slice(1).map(mapper.result)[0] ?? {});
-    $: all_result_keys = ["From", ...result_keys]
+    $: all_result_keys = ["Results", ...result_keys]
 </script>
 
 <div class="task">
@@ -39,7 +39,6 @@
             {/each}
         </tr>
     </table>
-    <span>Results:</span>
     <table>
         <tr>
         {#each all_result_keys as th}
@@ -60,11 +59,11 @@
         {/each}
     </table>
     <Expandable>
-        <span slot="head">Show extra info</span>
+        <span slot="head">Additional information</span>
         <div>
-            Id: {task.task.id}
+            ID: {task.task.id}
             <br />
-            Ttl: {task.task.ttl}
+            TTL: {task.task.ttl}
             <br />
             Failiure stratagy: {format_failiure_strat(task.task)}
             <br />
@@ -81,5 +80,28 @@
         margin: 1rem;
         text-align: start;
         padding: 1rem;
+    }
+    table {
+        font-family: Arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    tr:nth-child(even) {
+        background-color: #e7e7e7;
+    }
+
+    tr:hover {
+        background-color: #ddd;
     }
 </style>
