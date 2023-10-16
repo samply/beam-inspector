@@ -29,7 +29,7 @@ pub fn router(beam_proxy_url: Uri, monitoring_secret: String) -> Router {
                 .expect("Failed to make request to beam proxy")
         }))
         .route("/mappings", get(move || async move {
-            Json(json5::from_str::<serde_json::Value>(&fs::read_to_string("./formatters/example.json").unwrap()).unwrap())
+            Json(serde_yaml::from_slice::<serde_yaml::Value>(&fs::read("./formatters/example.yaml").unwrap()).unwrap())
         }))
         .fallback(static_handler)
 }
