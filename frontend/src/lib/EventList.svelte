@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { derived, writable } from "svelte/store";
     import { tasks } from "../store";
     import type { Task } from "../task";
     import TaskView from "./TaskView.svelte";
@@ -7,51 +6,41 @@
 
     export let default_filter: (t: Task) => boolean = _ => true;
 
-    // TODO: Fix filters
-    let from_filter_value = writable("");
-    let from_filter = derived(from_filter_value, ($from_filter_value) => (task: Task) => {
+    let from_filter_value = "";
+    $: from_filter = (task: Task) => {
         // If from_filter is not an empty string or undefined always return true otherwise check from field
-        return !$from_filter_value || task.task.from.includes($from_filter_value)
-    });
+        return !from_filter_value || task.task.from.includes(from_filter_value)
+    };
 
-    let done_filter = writable(false);
-    let hide_done_filter = derived(done_filter, ($done_filter) => (task: Task) => {
-        return !$done_filter || !Array.from(task.results.values()).every(result => result?.status === "succeeded")
-    });
+    let done_filter = false;
+    $: hide_done_filter = (task: Task) => {
+        return !done_filter || !Array.from(task.results.values()).every(result => result?.status === "succeeded")
+    };
     
     // This should proably be a toggle?
-    let incoming_filter_active = writable(false);
-    let hide_incoming_filter = derived(incoming_filter_active, ($incoming_filter_active) => (task: Task) => {
-        return !$incoming_filter_active || !task.is_incoming
-    });
+    let incoming_filter_status = false;
+    $: incoming_outgoing_filter = (task: Task) => {
+        return incoming_filter_status === task.is_incoming
+    };
 
-    let filters = derived([from_filter, hide_done_filter, hide_incoming_filter], (filters) => [ default_filter, ...filters ], [$from_filter, $hide_done_filter, $hide_incoming_filter]);
+    $: filters = [from_filter, hide_done_filter, incoming_outgoing_filter, default_filter];
     // Update filtered tasks whenever a new task or a new filter gets added
-    let filtered_tasks = derived(
-        [tasks, filters],
-        ([$tasks, $filters]) => $tasks.filter(task => $filters.every(filter => filter(task))));
-    $: {
-        default_filter;
-        filtered_tasks = derived(
-            [tasks, filters],
-            ([$tasks, $filters]) => $tasks.filter(task => $filters.every(filter => filter(task)))
-        );
-    }
+    $: filtered_tasks = $tasks.filter(task => filters.every(filter => filter(task)))
 </script>
 
 <header>
     <h2>Tasks</h2>
-    <ModeToggle bind:incoming={$incoming_filter_active}/>
+    <ModeToggle bind:incoming={incoming_filter_status}/>
 </header>
 <div>
     <div class="settings">
         <button on:click={() => $tasks = []}>Clear Tasks</button>
-        <button class:active={$done_filter} on:click={() => $done_filter = !$done_filter}>Hide completed</button>
+        <button class:active={done_filter} on:click={() => done_filter = !done_filter}>Hide completed</button>
         <span>Filter from:</span>
-        <input type="text" class="task-filter" bind:value={$from_filter_value}>
+        <input type="text" class="task-filter" bind:value={from_filter_value}>
     </div>
     <ul>
-        {#each $filtered_tasks as task}
+        {#each filtered_tasks as task}
             <li>
                 <TaskView {task} />
             </li>
