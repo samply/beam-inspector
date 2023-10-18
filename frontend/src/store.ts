@@ -13,7 +13,7 @@ function append_result(result: MsgTaskResult) {
     }
 }
 
-const sse_stream = new EventSource("/events");
+let sse_stream = new EventSource("/events");
 
 sse_stream.addEventListener("message", (e) => {
     // We cant push as we need svelte to understand that we updated this and need to rerender
@@ -35,11 +35,13 @@ sse_stream.addEventListener("message", (e) => {
         let response = update.response;
 
         if (Array.isArray(msg)) {
-            msg.forEach(append_result);
-        } else if ("id" in msg) {
-            tasks.update((ts) => [...ts, new Task(msg as MsgTaskRequest, true)]);
-        } else if ("status" in msg) {
-            append_result(msg);
+            msg.forEach(m => {
+                if ("id" in m) {
+                    tasks.update((ts) => [...ts, new Task(m as MsgTaskRequest, true)]);
+                } else if ("status" in m) {
+                    append_result(m)
+                }
+            });
         } else {
             console.log("Ignoring:", response);
         }
@@ -49,8 +51,10 @@ sse_stream.addEventListener("message", (e) => {
 })
 
 sse_stream.addEventListener("error", (e) => {
-    console.log("Error during SSE", e);
     if (sse_stream.CLOSED) {
-        alert("SSE connection closed");
+        console.log("SSE disconnected reconnecting");
+        sse_stream = new EventSource("/events")
+    } else {
+        console.log("Error during SSE", e);
     }
 });

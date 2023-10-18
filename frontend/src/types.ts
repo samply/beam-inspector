@@ -41,6 +41,6 @@ export type MonitoringUpdate = {
     response: {
         status: number,
         headers: Map<string, string>,
-        json: Msg | Array<MsgTaskResult>
+        json: Array<MsgTaskResult> | Array<MsgTaskRequest>
     }
 }
